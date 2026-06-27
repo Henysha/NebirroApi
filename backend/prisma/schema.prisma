@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LedgerEntryType {
+  CREDIT
+  DEBIT
+}
+
+enum TransferStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum TransferType {
+  FUND_WALLET
+  WALLET_TRANSFER
+  CAPITAL_DISBURSEMENT
+  REPAYMENT
+}
+
+enum WebhookEventType {
+  TRANSFER_CREATED
+  TRANSFER_COMPLETED
+  TRANSFER_FAILED
+  WALLET_FUNDED
+}
+
+enum WebhookEventStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+}
+
+model Partner {
+  id               String            @id @default(cuid())
+  name             String
+  email            String            @unique
+  apiKeys          ApiKey[]
+  customers        Customer[]
+  financialAccounts FinancialAccount[]
+  wallets          Wallet[]
+  capitalPrograms  CapitalProgram[]
+  webhookEndpoints WebhookEndpoint[]
+  webhookEvents    WebhookEvent[]
+  idempotencyKeys  IdempotencyKey[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  partnerId   String
+  partner     Partner   @relation(fields: [partnerId], references: [id])
+  name        String
+  keyHash     String    @unique
+  keyPrefix   String
+  status      ApiKeyStatus @default(ACTIVE)
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  email     String
+  name      String
+  metadata  Json?
+  wallets   Wallet[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([partnerId, email])
+}
+
+model FinancialAccount {
+  id        String   @id @default(cuid())
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  name      String
+  currency  String
+  wallets   Wallet[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wallet {
+  id                 String            @id @default(cuid())
+  partnerId          String
+  partner            Partner           @relation(fields: [partnerId], references: [id])
+  customerId         String?
+  customer           Customer?         @relation(fields: [customerId], references: [id])
+  financialAccountId String?
+  financialAccount   FinancialAccount? @relation(fields: [financialAccountId], references: [id])
+  name               String
+  currency           String
+  ledgerEntries      LedgerEntry[]
+  outgoingTransfers  Transfer[]        @relation("SourceWallet")
+  incomingTransfers  Transfer[]        @relation("DestinationWallet")
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model LedgerEntry {
+  id          String          @id @default(cuid())
+  partnerId   String
+  walletId    String
+  wallet      Wallet          @relation(fields: [walletId], references: [id])
+  transferId  String?
+  transfer    Transfer?       @relation(fields: [transferId], references: [id])
+  type        LedgerEntryType
+  amount      Int
+  currency    String
+  description String?
+  createdAt   DateTime        @default(now())
+
+  @@index([walletId, createdAt])
+}
+
+model Transfer {
+  id                  String         @id @default(cuid())
+  partnerId           String
+  sourceWalletId      String?
+  sourceWallet        Wallet?        @relation("SourceWallet", fields: [sourceWalletId], references: [id])
+  destinationWalletId String
+  destinationWallet   Wallet         @relation("DestinationWallet", fields: [destinationWalletId], references: [id])
+  type                TransferType
+  amount              Int
+  currency            String
+  status              TransferStatus @default(PENDING)
+  description         String?
+  ledgerEntries       LedgerEntry[]
+  webhookEvents       WebhookEvent[]
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
+
+model CapitalProgram {
+  id          String   @id @default(cuid())
+  partnerId   String
+  partner     Partner  @relation(fields: [partnerId], references: [id])
+  name        String
+  description String?
+  currency    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WebhookEndpoint {
+  id        String   @id @default(cuid())
+  partnerId String
+  partner   Partner  @relation(fields: [partnerId], references: [id])
+  url       String
+  secret    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WebhookEvent {
+  id          String             @id @default(cuid())
+  partnerId   String
+  partner     Partner            @relation(fields: [partnerId], references: [id])
+  transferId  String?
+  transfer    Transfer?          @relation(fields: [transferId], references: [id])
+  type        WebhookEventType
+  payload     Json
+  status      WebhookEventStatus @default(PENDING)
+  attempts    Int                @default(0)
+  lastError   String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model IdempotencyKey {
+  id             String   @id @default(cuid())
+  partnerId      String
+  partner        Partner  @relation(fields: [partnerId], references: [id])
+  key            String
+  requestHash    String
+  responseStatus Int
+  responseBody   Json
+  createdAt      DateTime @default(now())
+
+  @@unique([partnerId, key])
+}
