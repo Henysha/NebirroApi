@@ -1,5 +1,7 @@
 # NebirroAPI
 
+![CI](https://github.com/Henysha/NebirroApi/actions/workflows/ci.yml/badge.svg)
+
 Stripe-style programmable financial infrastructure for trusted capital networks.
 
 NebirroAPI demonstrates how a partner-facing financial platform can onboard partners, issue scoped API keys, create customers and wallets, move value, derive balances from an immutable ledger, enforce idempotency, emit webhook events, expose Swagger docs, and provide a TypeScript SDK plus React dashboard.
@@ -192,7 +194,6 @@ The demo walks through partner creation, API key issuance, customer creation, wa
 - Ledger reconciliation reports.
 - Pagination and filtering for high-volume resources.
 - Production-grade secret management and key rotation.
-- CI pipeline with Dockerized integration and Playwright tests.
 - Published SDK package with generated API types.
 
 ## Portfolio / Resume Bullet
