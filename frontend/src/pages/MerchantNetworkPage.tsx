@@ -278,7 +278,7 @@ export function MerchantNetworkPage() {
                   }
                 >
                   <Field label="Supplier">
-                    <Select name="merchantId" required>
+                    <Select aria-label="Supplier" name="merchantId" required>
                       <option value="">Choose supplier</option>
                       {data.merchants.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -331,6 +331,7 @@ export function MerchantNetworkPage() {
                   <Field label="Offer">
                     <Select
                       required
+                      aria-label="Offer"
                       value={selectedOffer}
                       onChange={(e) => {
                         setSelectedOffer(e.target.value);
@@ -350,6 +351,7 @@ export function MerchantNetworkPage() {
                   <Field label="Buyer">
                     <Select
                       required
+                      aria-label="Buyer"
                       value={buyerId}
                       onChange={(e) => {
                         setBuyerId(e.target.value);
@@ -536,7 +538,11 @@ export function MerchantNetworkPage() {
                 }
               >
                 <Field label="Supplier purchase">
-                  <Select name="tradeId" required>
+                  <Select
+                    aria-label="Supplier purchase"
+                    name="tradeId"
+                    required
+                  >
                     <option value="">Choose agreed trade</option>
                     {data.trades
                       .filter(
