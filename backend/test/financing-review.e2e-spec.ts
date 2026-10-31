@@ -94,12 +94,12 @@ describe('Merchant authentication, consent and lender review', () => {
   });
   beforeEach(async () => {
     supplier = (
-      await admin('merchants', { name: 'Supplier', market: 'Merkato' }).expect(
+      await admin('merchants', { name: 'Supplier', market: 'Pilot market' }).expect(
         201,
       )
     ).body.id;
     buyer = (
-      await admin('merchants', { name: 'Buyer', market: 'Merkato' }).expect(201)
+      await admin('merchants', { name: 'Buyer', market: 'Pilot market' }).expect(201)
     ).body.id;
     const offer = (
       await admin('offers', {
@@ -255,7 +255,7 @@ describe('Merchant authentication, consent and lender review', () => {
     const view = await workspace(lenderToken).expect(200);
     expect(view.body.applications).toHaveLength(1);
     const shared = view.body.applications[0];
-    expect(shared.merchant).toEqual({ name: 'Buyer', market: 'Merkato' });
+    expect(shared.merchant).toEqual({ name: 'Buyer', market: 'Pilot market' });
     expect(shared.trade).not.toHaveProperty('paymentReference');
     expect(shared.trade).not.toHaveProperty('deliveryEvidence');
     expect(shared).not.toHaveProperty('reviewEvents');

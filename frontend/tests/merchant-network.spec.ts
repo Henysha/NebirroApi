@@ -4,8 +4,8 @@ test("operator can record a purchase, request financing and complete trade evide
   page,
 }) => {
   const merchants = [
-    { id: "seller", name: "Merkato Grain Supply", market: "Ehil Berenda" },
-    { id: "buyer", name: "Aster Retail", market: "Merkato" },
+    { id: "seller", name: "Pilot Grain Supply", market: "Pilot market" },
+    { id: "buyer", name: "Aster Retail", market: "Pilot market" },
   ];
   const offer = {
     id: "offer",

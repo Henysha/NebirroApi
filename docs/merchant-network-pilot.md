@@ -1,6 +1,6 @@
 # Merchant-centered first product
 
-Extend this repository's NestJS modular monolith and React console. The first assisted pilot serves grain wholesalers and buyers around Ehil Berenda/Merkato, Addis Ababa. Keep the broader African network vision, but validate one dense trading cluster first.
+Extend this repository's NestJS modular monolith and React console. The first assisted pilot targets grain wholesalers and buyers in Ethiopia, with the specific trading cluster to be selected during pilot validation. Keep the broader African network vision, but validate one dense trading cluster first.
 
 ## Implemented slice
 

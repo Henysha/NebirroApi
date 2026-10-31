@@ -8,7 +8,7 @@ const fixture = () => ({
   consentRevokedAt: null as string | null,
   approvedAmountMinor: null as number | null,
   decisionReason: null as string | null,
-  merchant: { name: "Aster Retail", market: "Merkato" },
+  merchant: { name: "Aster Retail", market: "Pilot market" },
   lender: null as { id: string; name: string } | null,
   trade: {
     id: "trade",
@@ -19,7 +19,7 @@ const fixture = () => ({
       commodity: "Teff",
       merchant: {
         name: "Grain Supply",
-        market: "Merkato",
+        market: "Pilot market",
         supplierVerified: true,
       },
     },
@@ -163,7 +163,7 @@ test("operator verifies a supplier and issues a merchant code from the pilot con
   const merchant = {
     id: "merchant",
     name: "Aster Retail",
-    market: "Merkato",
+    market: "Pilot market",
     supplierVerified: false,
   };
   await page.addInitScript(() =>

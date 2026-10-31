@@ -55,13 +55,13 @@ describe('Merchant network assisted pilot', () => {
     supplier = (
       await post('merchants', {
         name: 'Grain supplier',
-        market: 'Ehil Berenda',
+        market: 'Pilot market',
       }).expect(201)
     ).body.id;
     buyer = (
       await post('merchants', {
         name: 'Grain buyer',
-        market: 'Merkato',
+        market: 'Pilot market',
       }).expect(201)
     ).body.id;
     offer = (
@@ -107,7 +107,7 @@ describe('Merchant network assisted pilot', () => {
       .set('x-merchant-operator-key', operatorKey)
       .expect(401);
     delete process.env.MERCHANT_OPERATOR_KEY;
-    await post('merchants', { name: 'Blocked', market: 'Merkato' }).expect(401);
+    await post('merchants', { name: 'Blocked', market: 'Pilot market' }).expect(401);
     process.env.MERCHANT_OPERATOR_KEY = operatorKey;
   });
   it('keeps all records and related identifiers within the partner scope', async () => {
@@ -211,7 +211,7 @@ describe('Merchant network assisted pilot', () => {
     ).toBe(0);
   });
   it('rejects invalid quantities, self-trades, overfunding and out-of-order transitions', async () => {
-    await post('merchants', { name: '   ', market: 'Merkato' }).expect(400);
+    await post('merchants', { name: '   ', market: 'Pilot market' }).expect(400);
     await post('trades', {
       offerId: offer,
       buyerId: supplier,

@@ -152,7 +152,7 @@ export function MerchantNetworkPage() {
   return (
     <section>
       <PageHeader
-        eyebrow="Nebirro • Merkato pilot"
+        eyebrow="Nebirro • Merchant pilot"
         title="Merchant network"
         description="Connect grain supply to purchases, build an evidenced trade history, and record inventory financing requests."
       />
@@ -253,7 +253,7 @@ export function MerchantNetworkPage() {
               >
                 {fields("Business name", "name", { maxLength: 120 })}
                 {fields("Market / location", "market", {
-                  defaultValue: "Ehil Berenda, Merkato",
+                  placeholder: "Enter market or business location",
                   maxLength: 120,
                 })}
                 <Button>Register merchant</Button>
