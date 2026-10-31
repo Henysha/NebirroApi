@@ -1,16 +1,17 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { maskApiKey, useApiKey } from './lib/auth';
+import { NavLink, Outlet } from "react-router-dom";
+import { maskApiKey, useApiKey } from "./lib/auth";
 
 const navItems = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/partners', label: 'Partners' },
-  { to: '/api-keys', label: 'API Keys' },
-  { to: '/customers', label: 'Customers' },
-  { to: '/wallets', label: 'Wallets' },
-  { to: '/transfers', label: 'Transfers' },
-  { to: '/ledger', label: 'Ledger' },
-  { to: '/webhooks', label: 'Webhook Events' },
-  { to: '/sdk', label: 'Developer SDK' },
+  { to: "/", label: "Dashboard" },
+  { to: "/merchant-network", label: "Merchant Network" },
+  { to: "/partners", label: "Partners" },
+  { to: "/api-keys", label: "API Keys" },
+  { to: "/customers", label: "Customers" },
+  { to: "/wallets", label: "Wallets" },
+  { to: "/transfers", label: "Transfers" },
+  { to: "/ledger", label: "Ledger" },
+  { to: "/webhooks", label: "Webhook Events" },
+  { to: "/sdk", label: "Developer SDK" },
 ];
 
 export function App() {
@@ -19,7 +20,9 @@ export function App() {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#312e81,transparent_32rem),linear-gradient(180deg,#020617_0%,#0f172a_100%)] text-slate-50">
       <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-slate-700/80 bg-slate-950/95 p-6 shadow-2xl shadow-black/30 backdrop-blur md:block">
-        <div className="text-xl font-bold tracking-tight text-white">NebirroAPI</div>
+        <div className="text-xl font-bold tracking-tight text-white">
+          NebirroAPI
+        </div>
         <p className="mt-2 text-sm leading-6 text-slate-300">
           Programmable financial infrastructure for trusted capital networks.
         </p>
@@ -31,8 +34,8 @@ export function App() {
               className={({ isActive }) =>
                 `block rounded-xl px-4 py-3 text-sm font-semibold transition ${
                   isActive
-                    ? 'bg-indigo-200 text-slate-950 shadow-lg shadow-indigo-950/30'
-                    : 'text-slate-200 hover:bg-slate-800 hover:text-white'
+                    ? "bg-indigo-200 text-slate-950 shadow-lg shadow-indigo-950/30"
+                    : "text-slate-200 hover:bg-slate-800 hover:text-white"
                 }`
               }
             >
@@ -46,20 +49,23 @@ export function App() {
         <header className="sticky top-0 z-10 border-b border-slate-700/80 bg-slate-950/90 shadow-xl shadow-black/10 backdrop-blur">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-indigo-200">Developer Console</p>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-indigo-200">
+                Developer Console
+              </p>
               <p className="mt-1 text-sm font-medium text-slate-300">
-                API base URL: http://localhost:3000/api · {apiKey ? 'Active API key restored' : 'No active API key'}
+                API base URL: http://localhost:3000/api ·{" "}
+                {apiKey ? "Active API key restored" : "No active API key"}
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <span
                 className={`rounded-full border px-3 py-2 text-xs font-bold ${
                   apiKey
-                    ? 'border-emerald-300/40 bg-emerald-400/15 text-emerald-50'
-                    : 'border-amber-300/40 bg-amber-400/15 text-amber-50'
+                    ? "border-emerald-300/40 bg-emerald-400/15 text-emerald-50"
+                    : "border-amber-300/40 bg-amber-400/15 text-amber-50"
                 }`}
               >
-                {apiKey ? `Active: ${maskApiKey(apiKey)}` : 'API key required'}
+                {apiKey ? `Active: ${maskApiKey(apiKey)}` : "API key required"}
               </span>
               <input
                 data-testid="active-api-key-input"
@@ -76,10 +82,26 @@ export function App() {
                 Clear
               </button>
             </div>
-            <p className="text-xs font-medium text-slate-300 lg:hidden">{maskApiKey(apiKey)}</p>
+            <p className="text-xs font-medium text-slate-300 lg:hidden">
+              {maskApiKey(apiKey)}
+            </p>
           </div>
         </header>
         <div className="mx-auto max-w-7xl px-6 py-8">
+          <nav
+            className="mb-6 flex flex-wrap gap-3 md:hidden"
+            aria-label="Mobile navigation"
+          >
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className="text-sm text-indigo-200 underline"
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
           <Outlet />
         </div>
       </main>

@@ -44,32 +44,33 @@ enum ApiKeyStatus {
 }
 
 model Partner {
-  id               String            @id @default(cuid())
-  name             String
-  email            String            @unique
-  apiKeys          ApiKey[]
-  customers        Customer[]
+  id                String             @id @default(cuid())
+  name              String
+  email             String             @unique
+  merchants         Merchant[]
+  apiKeys           ApiKey[]
+  customers         Customer[]
   financialAccounts FinancialAccount[]
-  wallets          Wallet[]
-  capitalPrograms  CapitalProgram[]
-  webhookEndpoints WebhookEndpoint[]
-  webhookEvents    WebhookEvent[]
-  idempotencyKeys  IdempotencyKey[]
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  wallets           Wallet[]
+  capitalPrograms   CapitalProgram[]
+  webhookEndpoints  WebhookEndpoint[]
+  webhookEvents     WebhookEvent[]
+  idempotencyKeys   IdempotencyKey[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model ApiKey {
-  id          String    @id @default(cuid())
-  partnerId   String
-  partner     Partner   @relation(fields: [partnerId], references: [id])
-  name        String
-  keyHash     String    @unique
-  keyPrefix   String
-  status      ApiKeyStatus @default(ACTIVE)
-  lastUsedAt  DateTime?
-  revokedAt   DateTime?
-  createdAt   DateTime  @default(now())
+  id         String       @id @default(cuid())
+  partnerId  String
+  partner    Partner      @relation(fields: [partnerId], references: [id])
+  name       String
+  keyHash    String       @unique
+  keyPrefix  String
+  status     ApiKeyStatus @default(ACTIVE)
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime     @default(now())
 }
 
 model Customer {
@@ -171,18 +172,18 @@ model WebhookEndpoint {
 }
 
 model WebhookEvent {
-  id          String             @id @default(cuid())
-  partnerId   String
-  partner     Partner            @relation(fields: [partnerId], references: [id])
-  transferId  String?
-  transfer    Transfer?          @relation(fields: [transferId], references: [id])
-  type        WebhookEventType
-  payload     Json
-  status      WebhookEventStatus @default(PENDING)
-  attempts    Int                @default(0)
-  lastError   String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id         String             @id @default(cuid())
+  partnerId  String
+  partner    Partner            @relation(fields: [partnerId], references: [id])
+  transferId String?
+  transfer   Transfer?          @relation(fields: [transferId], references: [id])
+  type       WebhookEventType
+  payload    Json
+  status     WebhookEventStatus @default(PENDING)
+  attempts   Int                @default(0)
+  lastError  String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
 }
 
 model IdempotencyKey {
@@ -196,4 +197,97 @@ model IdempotencyKey {
   createdAt      DateTime @default(now())
 
   @@unique([partnerId, key])
+}
+
+// Assisted merchant pilot. Money is integer ETB minor units (santim).
+enum TradeState {
+  AGREED
+  DELIVERED
+  COMPLETED
+}
+
+model Merchant {
+  id                String             @id @default(cuid())
+  partnerId         String
+  partner           Partner            @relation(fields: [partnerId], references: [id])
+  name              String
+  market            String
+  country           String             @default("ET")
+  offers            Offer[]
+  purchases         TradeAgreement[]   @relation("Buyer")
+  financingRequests FinancingRequest[]
+  createdAt         DateTime           @default(now())
+
+  @@index([partnerId, createdAt])
+}
+
+model Offer {
+  id              String           @id @default(cuid())
+  partnerId       String
+  merchantId      String
+  merchant        Merchant         @relation(fields: [merchantId], references: [id])
+  commodity       String
+  availableKg     Int
+  pricePerKgMinor Int
+  currency        String           @default("ETB")
+  trades          TradeAgreement[]
+  createdAt       DateTime         @default(now())
+
+  @@index([partnerId, createdAt])
+}
+
+model TradeAgreement {
+  id               String             @id @default(cuid())
+  partnerId        String
+  offerId          String
+  offer            Offer              @relation(fields: [offerId], references: [id])
+  buyerId          String
+  buyer            Merchant           @relation("Buyer", fields: [buyerId], references: [id])
+  requestKey       String
+  quantityKg       Int
+  pricePerKgMinor  Int
+  totalMinor       Int
+  currency         String             @default("ETB")
+  state            TradeState         @default(AGREED)
+  deliveryEvidence String?
+  deliveredAt      DateTime?
+  paymentProvider  String?
+  paymentReference String?
+  paymentEvidence  String?
+  verifiedAt       DateTime?
+  events           TradeAttestation[]
+  financingRequest FinancingRequest?
+  createdAt        DateTime           @default(now())
+
+  @@unique([partnerId, requestKey])
+  @@unique([partnerId, paymentProvider, paymentReference])
+  @@index([partnerId, createdAt])
+}
+
+model TradeAttestation {
+  id         String         @id @default(cuid())
+  tradeId    String
+  trade      TradeAgreement @relation(fields: [tradeId], references: [id])
+  kind       String
+  actorKeyId String
+  evidence   String
+  createdAt  DateTime       @default(now())
+
+  @@index([tradeId, createdAt])
+}
+
+model FinancingRequest {
+  id          String         @id @default(cuid())
+  partnerId   String
+  merchantId  String
+  merchant    Merchant       @relation(fields: [merchantId], references: [id])
+  tradeId     String         @unique
+  trade       TradeAgreement @relation(fields: [tradeId], references: [id])
+  amountMinor Int
+  currency    String         @default("ETB")
+  purpose     String
+  status      String         @default("SUBMITTED")
+  createdAt   DateTime       @default(now())
+
+  @@index([partnerId, createdAt])
 }

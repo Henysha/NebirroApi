@@ -1,3 +1,4 @@
+import { MerchantNetworkModule } from './modules/merchant-network/merchant-network.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ApiKeysModule } from './modules/api-keys/api-keys.module';
@@ -15,6 +16,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     HealthModule,
+    MerchantNetworkModule,
     PartnersModule,
     ApiKeysModule,
     CustomersModule,
