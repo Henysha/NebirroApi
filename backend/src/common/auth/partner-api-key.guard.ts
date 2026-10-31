@@ -11,6 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 export interface AuthenticatedPartnerRequest extends Request {
   partnerId: string;
+  actorKeyId: string;
 }
 
 @Injectable()
@@ -18,7 +19,9 @@ export class PartnerApiKeyGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthenticatedPartnerRequest>();
+    const request = context
+      .switchToHttp()
+      .getRequest<AuthenticatedPartnerRequest>();
     const apiKey = request.header('x-api-key');
 
     if (!apiKey) {
@@ -45,6 +48,7 @@ export class PartnerApiKeyGuard implements CanActivate {
     }
 
     request.partnerId = storedKey.partnerId;
+    request.actorKeyId = storedKey.id;
     await this.prisma.apiKey.update({
       where: { id: storedKey.id },
       data: { lastUsedAt: new Date() },

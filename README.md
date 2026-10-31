@@ -12,6 +12,12 @@ Capital platforms need more than a simple payment form. They need reliable infra
 
 NebirroAPI is a compact portfolio-grade version of that infrastructure.
 
+## Merchant Network — first-product pilot
+
+The new `/merchant-network` workspace extends this API into merchant profiles, grain offers, stock-reserving agreements, delivery evidence, manually verified ETB payment references, completed trade history, and purchase-linked inventory financing applications. It is an operator-assisted pilot with a separate merchant consent and lender review portal at `/financing-portal`. It records manual pilot decisions but creates no binding loans and moves no money.
+
+See [pilot scope, setup, API and launch gates](docs/merchant-network-pilot.md). Both a partner API key and a separately configured `MERCHANT_OPERATOR_KEY` are required. Existing financial-console routes remain demo infrastructure.
+
 ## Core Features
 
 - Partner onboarding and API key issuance.

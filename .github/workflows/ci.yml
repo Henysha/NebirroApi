@@ -63,3 +63,9 @@ jobs:
 
       - name: Run backend integration tests
         run: npm run test:integration -w backend
+
+      - name: Install browser for merchant UI tests
+        run: npm exec -w frontend -- playwright install --with-deps chromium
+
+      - name: Test merchant workspace UI
+        run: npm run test:e2e -w frontend -- merchant-network.spec.ts financing-portal.spec.ts

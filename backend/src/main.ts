@@ -17,9 +17,16 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('NebirroAPI')
-    .setDescription('Programmable financial infrastructure for trusted capital networks.')
+    .setDescription(
+      'Programmable financial infrastructure for trusted capital networks.',
+    )
     .setVersion('0.1.0')
     .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'api-key')
+    .addApiKey(
+      { type: 'apiKey', name: 'x-merchant-operator-key', in: 'header' },
+      'merchant-operator',
+    )
+    .addBearerAuth({ type: 'http', scheme: 'bearer' }, 'pilot-access')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
