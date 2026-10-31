@@ -1,3 +1,4 @@
+import { FinancingPortalPage } from "./pages/FinancingPortalPage";
 import { MerchantNetworkPage } from "./pages/MerchantNetworkPage";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -16,6 +17,7 @@ import { ApiKeyProvider } from "./lib/auth";
 import "./styles.css";
 
 const router = createBrowserRouter([
+  { path: "/financing-portal", element: <FinancingPortalPage /> },
   {
     path: "/",
     element: <App />,

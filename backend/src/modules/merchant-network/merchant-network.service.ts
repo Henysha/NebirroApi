@@ -22,6 +22,9 @@ export class MerchantNetworkService {
   snapshot(partnerId: string) {
     return this.prisma.$transaction(async (tx) => ({
       merchants: await tx.merchant.findMany({
+        include: {
+          verifications: { orderBy: { createdAt: 'desc' }, take: 20 },
+        },
         where: { partnerId },
         orderBy: { createdAt: 'desc' },
         take: 200,
@@ -43,6 +46,7 @@ export class MerchantNetworkService {
         take: 200,
       }),
       financingRequests: await tx.financingRequest.findMany({
+        include: { reviewEvents: { orderBy: { sequence: 'asc' } } },
         where: { partnerId },
         orderBy: { createdAt: 'desc' },
         take: 200,
@@ -232,6 +236,13 @@ export class MerchantNetworkService {
         throw new BadRequestException(
           'Request exceeds the supplier purchase total',
         );
+      if (
+        await tx.financingRequest.findUnique({ where: { tradeId: trade.id } })
+      ) {
+        throw new ConflictException(
+          'This purchase already has a financing application',
+        );
+      }
       // Lock the trade against a concurrent delivery before inserting its application.
       const locked = await tx.tradeAgreement.updateMany({
         where: { id: trade.id, partnerId, state: 'AGREED' },

@@ -44,6 +44,8 @@ enum ApiKeyStatus {
 }
 
 model Partner {
+  pilotAccess       PilotAccess[]
+  lenders           PilotLender[]
   id                String             @id @default(cuid())
   name              String
   email             String             @unique
@@ -207,16 +209,20 @@ enum TradeState {
 }
 
 model Merchant {
-  id                String             @id @default(cuid())
-  partnerId         String
-  partner           Partner            @relation(fields: [partnerId], references: [id])
-  name              String
-  market            String
-  country           String             @default("ET")
-  offers            Offer[]
-  purchases         TradeAgreement[]   @relation("Buyer")
-  financingRequests FinancingRequest[]
-  createdAt         DateTime           @default(now())
+  supplierVerified   Boolean                @default(false)
+  supplierVerifiedAt DateTime?
+  verifications      SupplierVerification[]
+  pilotAccess        PilotAccess?
+  id                 String                 @id @default(cuid())
+  partnerId          String
+  partner            Partner                @relation(fields: [partnerId], references: [id])
+  name               String
+  market             String
+  country            String                 @default("ET")
+  offers             Offer[]
+  purchases          TradeAgreement[]       @relation("Buyer")
+  financingRequests  FinancingRequest[]
+  createdAt          DateTime               @default(now())
 
   @@index([partnerId, createdAt])
 }
@@ -277,17 +283,90 @@ model TradeAttestation {
 }
 
 model FinancingRequest {
-  id          String         @id @default(cuid())
-  partnerId   String
-  merchantId  String
-  merchant    Merchant       @relation(fields: [merchantId], references: [id])
-  tradeId     String         @unique
-  trade       TradeAgreement @relation(fields: [tradeId], references: [id])
-  amountMinor Int
-  currency    String         @default("ETB")
-  purpose     String
-  status      String         @default("SUBMITTED")
-  createdAt   DateTime       @default(now())
+  lenderId            String?
+  lender              PilotLender?           @relation(fields: [lenderId], references: [id])
+  consentedAt         DateTime?
+  consentRevokedAt    DateTime?
+  consentVersion      String?
+  approvedAmountMinor Int?
+  decisionReason      String?
+  decidedAt           DateTime?
+  reviewEvents        FinancingReviewEvent[]
+  id                  String                 @id @default(cuid())
+  partnerId           String
+  merchantId          String
+  merchant            Merchant               @relation(fields: [merchantId], references: [id])
+  tradeId             String                 @unique
+  trade               TradeAgreement         @relation(fields: [tradeId], references: [id])
+  amountMinor         Int
+  currency            String                 @default("ETB")
+  purpose             String
+  status              String                 @default("SUBMITTED")
+  createdAt           DateTime               @default(now())
 
   @@index([partnerId, createdAt])
+}
+
+enum PilotRole {
+  MERCHANT
+  REVIEWER
+}
+
+model PilotLender {
+  id           String             @id @default(cuid())
+  partnerId    String
+  partner      Partner            @relation(fields: [partnerId], references: [id])
+  name         String
+  pilotAccess  PilotAccess?
+  applications FinancingRequest[]
+  createdAt    DateTime           @default(now())
+
+  @@index([partnerId, createdAt])
+}
+
+// One active credential per subject. Rotation invalidates the previous token.
+model PilotAccess {
+  id         String       @id @default(cuid())
+  partnerId  String
+  partner    Partner      @relation(fields: [partnerId], references: [id])
+  role       PilotRole
+  merchantId String?      @unique
+  merchant   Merchant?    @relation(fields: [merchantId], references: [id])
+  lenderId   String?      @unique
+  lender     PilotLender? @relation(fields: [lenderId], references: [id])
+  tokenHash  String       @unique
+  version    Int          @default(1)
+  issuedBy   String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([partnerId])
+}
+
+model SupplierVerification {
+  id         String   @id @default(cuid())
+  merchantId String
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+  verified   Boolean
+  evidence   String
+  actorKeyId String
+  createdAt  DateTime @default(now())
+
+  @@index([merchantId, createdAt])
+}
+
+model FinancingReviewEvent {
+  sequence  Int              @unique @default(autoincrement())
+  id        String           @id @default(cuid())
+  requestId String
+  request   FinancingRequest @relation(fields: [requestId], references: [id])
+  kind      String
+  actorId   String
+  lenderId  String?
+  detail    String
+  createdAt DateTime         @default(now())
+
+  @@index([requestId, createdAt])
 }

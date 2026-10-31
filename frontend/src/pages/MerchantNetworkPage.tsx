@@ -1,3 +1,4 @@
+import { FinancingAdminPanel } from "../components/FinancingAdminPanel";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Card, SectionTitle } from "../components/Card";
 import { Button, Field, Input, Select } from "../components/FormControls";
@@ -203,17 +204,21 @@ export function MerchantNetworkPage() {
         className="mb-5 flex flex-wrap gap-2"
         aria-label="Merchant workspace sections"
       >
-        {["Marketplace", "Trade workflow", "Financing", "Merchants"].map(
-          (t) => (
-            <Button
-              key={t}
-              variant={tab === t ? "primary" : "secondary"}
-              onClick={() => setTab(t)}
-            >
-              {t}
-            </Button>
-          ),
-        )}
+        {[
+          "Marketplace",
+          "Trade workflow",
+          "Financing",
+          "Merchants",
+          "Access & review",
+        ].map((t) => (
+          <Button
+            key={t}
+            variant={tab === t ? "primary" : "secondary"}
+            onClick={() => setTab(t)}
+          >
+            {t}
+          </Button>
+        ))}
       </div>
       {error && <ErrorState message={error} />}
       {notice && (
@@ -226,6 +231,13 @@ export function MerchantNetworkPage() {
         disabled={!ready || busy || loading}
         className="min-w-0 space-y-5"
       >
+        {tab === "Access & review" && (
+          <FinancingAdminPanel
+            apiKey={apiKey}
+            operatorKey={operatorKey}
+            merchants={data.merchants}
+          />
+        )}
         {tab === "Merchants" && (
           <div className="grid gap-5 lg:grid-cols-2">
             <Card>
@@ -524,8 +536,9 @@ export function MerchantNetworkPage() {
               <SectionTitle title="Request inventory financing" />
               <p className="mb-4 text-sm text-slate-300">
                 Link the buyer’s application to an agreed supplier purchase
-                before delivery. Submission does not establish eligibility.
-                Lender review and data-sharing consent are future steps.
+                before delivery. Submission does not establish eligibility. Use
+                the financing portal to grant sharing consent and follow lender
+                review.
               </p>
               <form
                 className="space-y-4"

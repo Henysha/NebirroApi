@@ -68,4 +68,4 @@ jobs:
         run: npm exec -w frontend -- playwright install --with-deps chromium
 
       - name: Test merchant workspace UI
-        run: npm run test:e2e -w frontend -- merchant-network.spec.ts
+        run: npm run test:e2e -w frontend -- merchant-network.spec.ts financing-portal.spec.ts

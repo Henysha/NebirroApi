@@ -26,6 +26,7 @@ async function bootstrap() {
       { type: 'apiKey', name: 'x-merchant-operator-key', in: 'header' },
       'merchant-operator',
     )
+    .addBearerAuth({ type: 'http', scheme: 'bearer' }, 'pilot-access')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
