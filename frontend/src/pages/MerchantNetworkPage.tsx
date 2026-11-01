@@ -1,3 +1,4 @@
+import { isDemo } from "../demo/demo-api";
 import { FinancingAdminPanel } from "../components/FinancingAdminPanel";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Card, SectionTitle } from "../components/Card";
@@ -61,7 +62,7 @@ function minorUnits(value: string) {
 
 export function MerchantNetworkPage() {
   const { apiKey } = useApiKey();
-  const [operatorKey, setOperatorKey] = useState("");
+  const [operatorKey, setOperatorKey] = useState(isDemo ? "demo-operator" : "");
   const [data, setData] = useState<Snapshot>(empty);
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -156,7 +157,7 @@ export function MerchantNetworkPage() {
         title="Merchant network"
         description="Connect grain supply to purchases, build an evidenced trade history, and record inventory financing requests."
       />
-      <Card className="mt-6">
+      {!isDemo && <Card className="mt-6">
         <SectionTitle
           title="Assisted pilot workspace"
           detail="ETB · Ethiopia"
@@ -180,7 +181,7 @@ export function MerchantNetworkPage() {
             Activate a partner API key in the console header first.
           </p>
         )}
-      </Card>
+      </Card>}
       <div className="my-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           ["Merchants", data.merchants.length],
@@ -209,7 +210,7 @@ export function MerchantNetworkPage() {
           "Trade workflow",
           "Financing",
           "Merchants",
-          "Access & review",
+          ...(!isDemo ? ["Access & review"] : []),
         ].map((t) => (
           <Button
             key={t}

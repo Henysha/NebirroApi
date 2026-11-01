@@ -205,3 +205,11 @@ The demo walks through partner creation, API key issuance, customer creation, wa
 ## Portfolio / Resume Bullet
 
 Built NebirroAPI, a Stripe-style programmable financial infrastructure platform using NestJS, TypeScript, PostgreSQL, Prisma, Docker, partner API keys, ledger-derived balances, idempotent transfers, webhook events, a TypeScript SDK, a React/TypeScript developer dashboard, Jest integration testing, and Playwright browser E2E coverage.
+
+## Public interactive demo
+
+[Try Nebirro](https://nebirro-merchant-demo.henokyrd.chatgpt.site) — no sign-up required. Switch between operator, merchant and lender reviewer, grant or withdraw application-sharing consent, and record a fictional financing decision.
+
+The hosted demo uses the React screens with a browser-only API adapter and per-tab sample data. It does not connect to the NestJS/PostgreSQL backend or move real money. Reset demo restores the sample scenario. Role switching is a demonstration, not production authentication.
+
+Build it with `npm run build:demo -w frontend`; serve `frontend/dist` on static hosting. Normal `npm run build -w frontend` retains the API-backed dashboard.

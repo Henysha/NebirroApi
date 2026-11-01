@@ -1,3 +1,4 @@
+import { isDemo, demoAdapter } from "../demo/demo-api";
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Card, SectionTitle } from "../components/Card";
@@ -7,6 +8,7 @@ import { getErrorMessage } from "../lib/api";
 
 // A separate client prevents operator credentials from following users into this portal.
 const portal = axios.create({
+  ...(isDemo ? { adapter: demoAdapter } : {}),
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000/api",
 });
 type Application = {
@@ -49,7 +51,7 @@ function parseAmount(value: string) {
     throw new Error("Invalid amount.");
   return amount;
 }
-export function FinancingPortalPage() {
+export function FinancingPortalPage({ demoRole }: { demoRole?: "merchant" | "reviewer" } = {}) {
   const [code, setCode] = useState("");
   const [token, setToken] = useState("");
   const [data, setData] = useState<Workspace | null>(null);
@@ -63,6 +65,7 @@ export function FinancingPortalPage() {
     },
     [],
   );
+  useEffect(() => { if (isDemo && demoRole) void refresh(`demo-${demoRole}`); }, [demoRole]);
   async function refresh(accessToken = token) {
     const current = ++epoch.current;
     setBusy(true);
@@ -133,7 +136,7 @@ export function FinancingPortalPage() {
     setBusy(false);
   }
   return (
-    <main className="min-h-screen bg-slate-950 px-5 py-8 text-slate-50 sm:px-8">
+    <main className={isDemo ? "text-slate-50" : "min-h-screen bg-slate-950 px-5 py-8 text-slate-50 sm:px-8"}>
       <div className="mx-auto max-w-5xl space-y-6">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -156,8 +159,8 @@ export function FinancingPortalPage() {
               >
                 Refresh
               </Button>
-              <Button variant="secondary" onClick={logout}>
-                Sign out
+              <Button variant="secondary" onClick={isDemo ? () => void refresh(`demo-${demoRole}`) : logout}>
+                {isDemo ? "Reload role" : "Sign out"}
               </Button>
             </div>
           )}
@@ -168,7 +171,7 @@ export function FinancingPortalPage() {
             {notice}
           </p>
         )}
-        {!token && (
+        {!token && !demoRole && (
           <Card>
             <SectionTitle title="Access your workspace" />
             <form
