@@ -208,8 +208,14 @@ Built NebirroAPI, a Stripe-style programmable financial infrastructure platform 
 
 ## Public interactive demo
 
-[Try Nebirro](https://nebirro-merchant-demo.henokyrd.chatgpt.site) — no sign-up required. Switch between operator, merchant and lender reviewer, grant or withdraw application-sharing consent, and record a fictional financing decision.
+The interactive demo requires no sign-up. Switch between operator, merchant and lender reviewer, grant or withdraw application-sharing consent, and record a fictional financing decision.
 
-The hosted demo uses the React screens with a browser-only API adapter and per-tab sample data. It does not connect to the NestJS/PostgreSQL backend or move real money. Reset demo restores the sample scenario. Role switching is a demonstration, not production authentication.
+The demo uses the React screens with a browser-only API adapter and per-tab sample data. It does not connect to the NestJS/PostgreSQL backend or move real money. Reset demo restores the sample scenario. Role switching is a demonstration, not production authentication.
 
 Build it with `npm run build:demo -w frontend`; serve `frontend/dist` on static hosting. Normal `npm run build -w frontend` retains the API-backed dashboard.
+
+### Deploy the demo on Vercel
+
+Import this repository with the Vite preset and repository root (`./`). Set the install command to `npm ci`, build command to `npm run build:demo -w frontend`, and output directory to `frontend/dist`. No backend secrets are required.
+
+Custom domain setup for `nebirro.com` and `demo.nebirro.com` is pending. Add the domains in Vercel and apply the exact DNS records it provides before sharing those addresses.
