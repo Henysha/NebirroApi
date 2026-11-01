@@ -1,3 +1,4 @@
+import { isDemo } from '../demo/demo-api';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { setApiKey } from './api';
 
@@ -12,10 +13,11 @@ interface ApiKeyContextValue {
 const ApiKeyContext = createContext<ApiKeyContextValue | undefined>(undefined);
 
 export function ApiKeyProvider({ children }: { children: ReactNode }) {
-  const [apiKey, setApiKeyState] = useState(() => localStorage.getItem(STORAGE_KEY) ?? '');
+  const [apiKey, setApiKeyState] = useState(() => isDemo ? 'demo-partner' : localStorage.getItem(STORAGE_KEY) ?? '');
 
   useEffect(() => {
     setApiKey(apiKey);
+    if (isDemo) return;
     if (apiKey) {
       localStorage.setItem(STORAGE_KEY, apiKey);
     } else {

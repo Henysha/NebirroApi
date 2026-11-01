@@ -1,8 +1,10 @@
+import { isDemo } from "./demo/demo-api";
+import { DemoApp, DemoOverview, DemoEngineering } from "./demo/DemoApp";
 import { FinancingPortalPage } from "./pages/FinancingPortalPage";
 import { MerchantNetworkPage } from "./pages/MerchantNetworkPage";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
 import { App } from "./App";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ApiKeysPage } from "./pages/ApiKeysPage";
@@ -16,7 +18,14 @@ import { WebhookEventsPage } from "./pages/WebhookEventsPage";
 import { ApiKeyProvider } from "./lib/auth";
 import "./styles.css";
 
-const router = createBrowserRouter([
+const router = isDemo ? createHashRouter([{ path: "/", element: <DemoApp />, children: [
+{ index: true, element: <DemoOverview /> },
+{ path: "merchant-network", element: <MerchantNetworkPage /> },
+{ path: "merchant", element: <FinancingPortalPage key="merchant" demoRole="merchant" /> },
+{ path: "reviewer", element: <FinancingPortalPage key="reviewer" demoRole="reviewer" /> },
+{ path: "engineering", element: <DemoEngineering /> },
+{ path: "*", element: <DemoOverview /> },
+]}]) : createBrowserRouter([
   { path: "/financing-portal", element: <FinancingPortalPage /> },
   {
     path: "/",
