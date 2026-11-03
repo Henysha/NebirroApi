@@ -1,5 +1,6 @@
 import { isDemo, demoAdapter } from "../demo/demo-api";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Card, SectionTitle } from "../components/Card";
 import { Button, Field, Input, Select } from "../components/FormControls";
@@ -159,9 +160,9 @@ export function FinancingPortalPage({ demoRole }: { demoRole?: "merchant" | "rev
               >
                 Refresh
               </Button>
-              <Button variant="secondary" onClick={isDemo ? () => void refresh(`demo-${demoRole}`) : logout}>
-                {isDemo ? "Reload role" : "Sign out"}
-              </Button>
+              {!isDemo && <Button variant="secondary" onClick={logout}>
+                Sign out
+              </Button>}
             </div>
           )}
         </header>
@@ -260,6 +261,14 @@ export function FinancingPortalPage({ demoRole }: { demoRole?: "merchant" | "rev
                             <p className="mb-3">
                               Shared with {app.lender?.name}
                             </p>
+                            {isDemo && !final && (
+                              <Link
+                                to="/reviewer"
+                                className="mb-3 mr-3 inline-block rounded-xl bg-indigo-200 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-white"
+                              >
+                                Next step: review as lender →
+                              </Link>
+                            )}
                             <Button
                               variant="secondary"
                               onClick={() => void action(app.id, "withdraw")}

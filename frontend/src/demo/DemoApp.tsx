@@ -13,7 +13,7 @@ export function DemoApp() {
     </header>
     {location.pathname !== '/' && <div className="mx-auto max-w-7xl px-5 pt-5"><p className="text-sm text-slate-300">Sample application: <strong className="text-indigo-200">{progress.status.replace(/_/g, ' ')}</strong> · {progress.shared ? 'Shared with the fictional lender' : 'Not shared with the lender'}</p></div>}
     <div className="mx-auto max-w-7xl px-5 py-8"><Outlet /></div>
-    <footer className="mx-auto max-w-7xl border-t border-slate-800 px-5 py-6 text-sm text-slate-400">Built by Henok Yared · Browser-based simulation of the Nebirro workflow. Your sample changes stay in this browser tab. <Link to="/engineering" className="text-indigo-200 underline">How the demo works</Link></footer>
+    <footer className="mx-auto max-w-7xl border-t border-slate-800 px-5 py-6 text-sm text-slate-400">Built by Henok Yared · <a href="https://www.linkedin.com/in/henok-yared-777x/" target="_blank" rel="noreferrer" className="text-indigo-200 underline">Connect on LinkedIn ↗</a> · Browser-based simulation of the Nebirro workflow. Your sample changes stay in this browser tab. <Link to="/engineering" className="text-indigo-200 underline">How the demo works</Link></footer>
   </div>;
 }
 export function DemoOverview() {

@@ -276,6 +276,43 @@ export function MerchantNetworkPage() {
         )}
         {tab === "Marketplace" && (
           <>
+            <Card>
+              <SectionTitle
+                title="Grain marketplace"
+                detail="Within this partner’s pilot network"
+              />
+              {!data.offers.length && (
+                <EmptyState message="Register merchants, then publish the first grain offer." />
+              )}
+              <div className="grid gap-4 md:grid-cols-2">
+                {data.offers.map((o) => (
+                  <article
+                    key={o.id}
+                    className="rounded-xl border border-slate-700 p-4"
+                  >
+                    <p className="text-lg font-semibold">{o.commodity}</p>
+                    <p className="text-slate-300">
+                      {o.merchant.name} · {o.merchant.market}
+                    </p>
+                    <p className="my-3">
+                      {money(o.pricePerKgMinor)} / kg · {o.availableKg} kg
+                      available
+                    </p>
+                    <Button
+                      variant="secondary"
+                      disabled={!o.availableKg || busy}
+                      onClick={() => {
+                        setSelectedOffer(o.id);
+                        setBuyerId("");
+                        requestKey.current = crypto.randomUUID();
+                      }}
+                    >
+                      Select offer
+                    </Button>
+                  </article>
+                ))}
+              </div>
+            </Card>
             <div className="grid gap-5 lg:grid-cols-2">
               <Card>
                 <SectionTitle title="Publish grain offer" />
@@ -404,43 +441,6 @@ export function MerchantNetworkPage() {
                 </form>
               </Card>
             </div>
-            <Card>
-              <SectionTitle
-                title="Grain marketplace"
-                detail="Within this partner’s pilot network"
-              />
-              {!data.offers.length && (
-                <EmptyState message="Register merchants, then publish the first grain offer." />
-              )}
-              <div className="grid gap-4 md:grid-cols-2">
-                {data.offers.map((o) => (
-                  <article
-                    key={o.id}
-                    className="rounded-xl border border-slate-700 p-4"
-                  >
-                    <p className="text-lg font-semibold">{o.commodity}</p>
-                    <p className="text-slate-300">
-                      {o.merchant.name} · {o.merchant.market}
-                    </p>
-                    <p className="my-3">
-                      {money(o.pricePerKgMinor)} / kg · {o.availableKg} kg
-                      available
-                    </p>
-                    <Button
-                      variant="secondary"
-                      disabled={!o.availableKg || busy}
-                      onClick={() => {
-                        setSelectedOffer(o.id);
-                        setBuyerId("");
-                        requestKey.current = crypto.randomUUID();
-                      }}
-                    >
-                      Select offer
-                    </Button>
-                  </article>
-                ))}
-              </div>
-            </Card>
           </>
         )}
         {tab === "Trade workflow" && (
